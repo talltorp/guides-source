@@ -184,19 +184,25 @@ export default class PostRoute extends Route {
 }
 ```
 
-If you do not define a model hook for a route, it will default to using EmberData to look up the record, as shown below:
-
-```js
-model(params) {
- return this.store.findRecord('post', params.post_id);
-}
-```
-
 In the `model` hook for routes with dynamic segments, it's your job to
 turn the ID (something like `47` or `post-slug`) into a model that can
-be rendered by the route's template. In the above example, we use the
-post's ID (`params.post_id`) as an argument to EmberData's `findRecord`
-method.
+be rendered by the route's template.
+
+In the above example, we could use the post's ID (`params.post_id`) as
+an argument to EmberData's `findRecord` method.
+
+```javascript {data-filename=app/routes/post.js}
+import Route from '@ember/routing/route';
+import { service } from '@ember/service';
+
+export default class PostRoute extends Route {
+  @service store;
+
+  model(params) {
+    return this.store.findRecord('post', params.post_id);
+  }
+}
+```
 
 ### Linking to a dynamic segment
 
@@ -299,7 +305,7 @@ import RSVP from 'rsvp';
 
 export default class AlbumRoute extends Route {
   @service store;
-  
+
   model({ album_id }) {
     return RSVP.hash({
       album: this.store.findRecord('album', album_id),
